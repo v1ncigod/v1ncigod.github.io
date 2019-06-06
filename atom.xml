@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://v1ncigod.github.io</id>
-    <title>Gridea</title>
-    <updated>2019-06-06T17:38:41.097Z</updated>
+    <title>随想录</title>
+    <updated>2019-06-06T17:41:12.131Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://v1ncigod.github.io"/>
     <link rel="self" href="https://v1ncigod.github.io/atom.xml"/>
     <subtitle>温故而知新</subtitle>
     <logo>https://v1ncigod.github.io/images/avatar.png</logo>
     <icon>https://v1ncigod.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2019, Gridea</rights>
+    <rights>All rights reserved 2019, 随想录</rights>
     <entry>
         <title type="html"><![CDATA[windows 劲爽环境配置]]></title>
         <id>https://v1ncigod.github.io/post/windows-jing-shuang-huan-jing-pei-zhi</id>
