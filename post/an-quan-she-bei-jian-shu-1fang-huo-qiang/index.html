@@ -1,57 +1,94 @@
-<?xml version="1.0" encoding="utf-8"?>
-<feed xmlns="http://www.w3.org/2005/Atom">
-    <id>https://v1ncigod.github.io</id>
-    <title>随想录</title>
-    <updated>2019-06-18T15:42:30.361Z</updated>
-    <generator>https://github.com/jpmonette/feed</generator>
-    <link rel="alternate" href="https://v1ncigod.github.io"/>
-    <link rel="self" href="https://v1ncigod.github.io/atom.xml"/>
-    <subtitle>温故而知新</subtitle>
-    <logo>https://v1ncigod.github.io/images/avatar.png</logo>
-    <icon>https://v1ncigod.github.io/favicon.ico</icon>
-    <rights>All rights reserved 2019, 随想录</rights>
-    <entry>
-        <title type="html"><![CDATA[windows 劲爽环境配置]]></title>
-        <id>https://v1ncigod.github.io/post/windows-jing-shuang-huan-jing-pei-zhi</id>
-        <link href="https://v1ncigod.github.io/post/windows-jing-shuang-huan-jing-pei-zhi">
-        </link>
-        <updated>2019-06-06T15:49:47.000Z</updated>
-        <summary type="html"><![CDATA[<p>首先Windows被众多Mac党鄙视的就是没有一个足够好用的终端。毕竟Cmd这个玩意历史太悠久了也拥有众多的历史包袱而且Windows构建大多数应用的时候采用的是Visual Studio的一键编译所以省去了很多的可选命令行配置。当你需要写一些跨平台的应用使用Linux下的一系列工具链的时候就只能使用不好用的（不好看的）git bash，想要快速增删查改的时候Powershell又没有智能补全，而且Cmd和Powershell的默认编码还是GBK。</p>
-]]></summary>
-        <content type="html"><![CDATA[<p>首先Windows被众多Mac党鄙视的就是没有一个足够好用的终端。毕竟Cmd这个玩意历史太悠久了也拥有众多的历史包袱而且Windows构建大多数应用的时候采用的是Visual Studio的一键编译所以省去了很多的可选命令行配置。当你需要写一些跨平台的应用使用Linux下的一系列工具链的时候就只能使用不好用的（不好看的）git bash，想要快速增删查改的时候Powershell又没有智能补全，而且Cmd和Powershell的默认编码还是GBK。</p>
-<!-- more -->
-<p><img src="https://v1ncigod.github.io/post-images/1559842411168.png" alt=""></p>
-<p>以上为最终的实现效果</p>
-<h2 id="do-it">Do It !</h2>
-<p><strong>WSL</strong></p>
-<p><strong>zsh and oh-my-zsh</strong></p>
-<p><strong>PowerShell Core</strong></p>
-<p><strong>oh-my-posh</strong></p>
-<p>网上有很多配置上面的文章，所以这里就不重述浪费时间了。</p>
-<p><a href="https://segmentfault.com/a/1190000016677670">WSL+ubuntu+换源+oh-my-zsh</a></p>
-<p>这篇文章不能苟同的是没有必要使用消耗性能的第三方终端模拟器。因为Windows 新推出的Powershell Core 开源 跨平台 而且功能强大（毕竟亲儿子）也可以实现美化。</p>
-<p><a href="https://github.com/PowerShell/PowerShell/releases">PowerShell Core 下载</a></p>
-<p><a href="https://blog.walterlv.com/post/beautify-powershell-like-zsh.html">PowerShell美化</a></p>
-<p>完全按照美化教程对待PowerShell Core就ok，字体推荐<strong>DejaVu sans Mono</strong><br>
-WSL 用oh-my-zsh的ys主题
-PowerShell Core 使用 oh-my-posh的Honukai主题就能达成一致
-最后在<strong>Visual Studio Code</strong>里面按照
-<em>首选项-&gt;功能-&gt;终端-&gt;External: Windows Exec</em>
-中设置好pwsh的路径（注意双//转义）就完全ok了。
-后面就等着期待了两年的新Shell发布了。</p>
-]]></content>
-    </entry>
-    <entry>
-        <title type="html"><![CDATA[安全设备简述（1）防火墙]]></title>
-        <id>https://v1ncigod.github.io/post/an-quan-she-bei-jian-shu-1fang-huo-qiang</id>
-        <link href="https://v1ncigod.github.io/post/an-quan-she-bei-jian-shu-1fang-huo-qiang">
-        </link>
-        <updated>2016-08-03T07:58:28.000Z</updated>
-        <summary type="html"><![CDATA[<h1 id="一防火墙">一.防火墙</h1>
-<h2 id="1防火墙简单定义">1.防火墙简单定义</h2>
-<p>常见防火墙是为了协助确保信息安全的的设备，按照特定规则，允许或是限制传输数据的通过，一般常见为硬件或者软件级防火墙，来构建网络区域。</p>
-]]></summary>
-        <content type="html"><![CDATA[<h1 id="一防火墙">一.防火墙</h1>
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="description" content="" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>安全设备简述（1）防火墙 | 随想录</title>
+<link rel="shortcut icon" href="https://v1ncigod.github.io/favicon.ico?v=1560872535155">
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+<link rel="stylesheet" href="https://v1ncigod.github.io/styles/main.css">
+
+<script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+<script src="https://cdn.bootcss.com/moment.js/2.23.0/moment.min.js"></script>
+
+
+
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://v1ncigod.github.io">
+  <img class="avatar" src="https://v1ncigod.github.io/images/avatar.png?v=1560872535155" alt="">
+  </a>
+  <h1 class="site-title">
+    随想录
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              安全设备简述（1）防火墙
+            </h2>
+            <div class="post-info">
+              <time class="post-time">
+                · 2016-08-03 ·
+              </time>
+              
+                <a href="https://v1ncigod.github.io/tag/JWHvKIfXU" class="post-tag">
+                  # 网络安全
+                </a>
+              
+            </div>
+            
+            <div class="post-content">
+              <h1 id="一防火墙">一.防火墙</h1>
 <h2 id="1防火墙简单定义">1.防火墙简单定义</h2>
 <p>常见防火墙是为了协助确保信息安全的的设备，按照特定规则，允许或是限制传输数据的通过，一般常见为硬件或者软件级防火墙，来构建网络区域。</p>
  <!-- more -->
@@ -212,6 +249,25 @@ UTM与NGFW的区别
 <h3 id="参考资料">参考资料：</h3>
 <p>维基百科
 i春秋安全产品原理</p>
-]]></content>
-    </entry>
-</feed>
+
+            </div>
+          </article>
+        </div>
+
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a> | 
+  <a class="rss" href="https://v1ncigod.github.io/atom.xml" target="_blank">RSS</a>
+</div>
+
+<script>
+  hljs.initHighlightingOnLoad()
+</script>
+
+      </div>
+    </div>
+  </body>
+</html>
