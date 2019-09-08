@@ -4,7 +4,7 @@
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>菜逼也要玩溢出之-Narnia | 随想录</title>
-<link rel="shortcut icon" href="https://v1ncigod.github.io/favicon.ico?v=1567946079723">
+<link rel="shortcut icon" href="https://v1ncigod.github.io/favicon.ico?v=1567947399676">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://v1ncigod.github.io/styles/main.css">
@@ -20,7 +20,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://v1ncigod.github.io">
-  <img class="avatar" src="https://v1ncigod.github.io/images/avatar.png?v=1567946079723" alt="">
+  <img class="avatar" src="https://v1ncigod.github.io/images/avatar.png?v=1567947399676" alt="">
   </a>
   <h1 class="site-title">
     随想录
@@ -81,6 +81,14 @@
                 · 2019-09-08 ·
               </time>
               
+                <a href="https://v1ncigod.github.io/tag/LyLqfmr7K" class="post-tag">
+                  # 二进制
+                </a>
+              
+                <a href="https://v1ncigod.github.io/tag/CHSduJX6W" class="post-tag">
+                  # pwn
+                </a>
+              
             </div>
             
             <div class="post-content">
@@ -121,7 +129,7 @@ int main(){
 <pre><code class="language-bash">cat &lt;(python -c'print &quot;A&quot;*20 + &quot;\xef\xbe\xad\xde&quot;') - | ./narnia0
 </code></pre>
 <p>或者</p>
-<pre><code class="language-bash">python c 'print &quot;A&quot;*20 + &quot;\xef\xbe\xad\xbe&quot;';echo 'cat /etc/naria_pass/narnial1'|/narnia/narnia0
+<pre><code class="language-bash">(python c 'print &quot;A&quot;*20 + &quot;\xef\xbe\xad\xbe&quot;';echo 'cat /etc/naria_pass/narnial1')|/narnia/narnia0
 </code></pre>
 <p>​		这两个payload是有区别的，这个题有个特殊的位置，当校验val的值为0xdeadbeef的时候启动/bin/sh的时候其实启动了shell，使用payload2的时候python输出字符串的时候会在最后最后带一个截断符号表示结束（EOF），这个位置就跟PHP5作为后端用%00截断一样，当你溢出完成其实交互shell已经启动了，但是由于EOF的原因就会立马结束，所以payload2在后面使用；表示没有结束。通过；进行断句（C语言啊C语言）执行了我们通关命令。payload1就是用了一种很取巧的方式，利用bash中的重定向技巧，通过&lt; ()- 的方式获取一个交互的shell，这个方法跟反弹shell的一些命令都是利用重定向，在这个payload中，首先执行了python的输出的字符串作为.narnia0一开始的输入，然后hold住这个会话，当你输入任何语句都会被当作输入传输到narnia0执行到system(&quot;/bin/sh&quot;)中（真绕）也就实现了交互型的shell。</p>
 
