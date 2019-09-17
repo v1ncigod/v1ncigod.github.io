@@ -4,7 +4,7 @@
 <meta name="description" content="" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>菜逼也要玩溢出之-Narnia | 随想录</title>
-<link rel="shortcut icon" href="https://v1ncigod.github.io/favicon.ico?v=1568731983626">
+<link rel="shortcut icon" href="https://v1ncigod.github.io/favicon.ico?v=1568732723753">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
 <link rel="stylesheet" href="https://v1ncigod.github.io/styles/main.css">
@@ -20,7 +20,7 @@
       <div class="main-content">
         <div class="site-header">
   <a href="https://v1ncigod.github.io">
-  <img class="avatar" src="https://v1ncigod.github.io/images/avatar.png?v=1568731983626" alt="">
+  <img class="avatar" src="https://v1ncigod.github.io/images/avatar.png?v=1568732723753" alt="">
   </a>
   <h1 class="site-title">
     随想录
@@ -152,7 +152,7 @@ int main(){
     return 0;
 }
 </code></pre>
-<p>这个题关键的行数在于第4行和第12行,第4行在主函数中初始化了一个指针(内存执行下一个位置的标志),第12行调用getenv函数获取环境变量,所以这个位置传入的值在一开始是一个指针,所以当传入值是一段shellcode的时候就会从ret的执行跳转到shellcode的执行。<br>
+<p>这个题关键的行数在于第4行和第12行,第4行在主函数中初始化了一个指针(参数压栈进内存的地址,当调用这个地方是时候采用指针的方式来取这个地方的参数或者指向另一个地方的地址),第12行调用getenv函数获取环境变量,所以这个位置传入的值在一开始是一个指针,所以当传入值是一段shellcode的时候就会从ret的执行跳转到shellcode的执行。<br>
 查看权限<br>
 <img src="https://v1ncigod.github.io/post-images/1568729036128.png" alt="1568729036128"><br>
 所以我们需要提供一段shellcode去以Narnia1的权限运行Narnia1通过shellcode获取narnia2的权限。<br>
